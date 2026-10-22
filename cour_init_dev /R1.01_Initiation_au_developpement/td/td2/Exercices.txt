@@ -1,0 +1,42 @@
+Exercice 1 
+
+variables : 
+    anée:entier 
+Début :
+    si (anee mod 400=0 et anee mod 100=!0 ) alors 
+        ecrire (anee+ "est bu=isextile")
+    sinon :
+        ecrire(anee + "n'est pas bisextile")
+    fin si 
+fin 
+
+Exercice 2 
+
+variable :
+    b: réel 
+    c:réel 
+    x:réel 
+Début : 
+    lire (b)
+    lire (c)
+    si b == 0 : 
+        x==-c/d 
+            ecrire ("solution " = x)
+    sinon : 
+        si c==0 :
+            ecrire ("solution 0 ")
+        sinon : 
+            ecrire ("pas de solution")
+        fin si 
+    fin si 
+fin 
+
+Exercice 5
+    variable : 
+        a1 , a2 , b1 , b2 , c1 , c2 : réel 
+
+    début 
+    fin 
+
+
+
