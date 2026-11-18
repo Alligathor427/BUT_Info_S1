@@ -38,5 +38,7 @@ def dernierChiffre ( n ) :
 
 
 
+
+
 # ===============question 6 ====
 def premiersChrffres(n,nbre):
