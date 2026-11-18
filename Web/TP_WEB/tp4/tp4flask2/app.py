@@ -1,19 +1,26 @@
-from flask import Flask, request, render_template, redirect, flash
+#! /usr/bin/python
+# -*- coding:utf-8 -*-
 
-from flask import session, g
+from flask import Flask, request, render_template, redirect, flash, session, g
 import pymysql.cursors
+
+app = Flask(__name__)
+app.config["TEMPLATES_AUTO_RELOAD"] = True
+app.secret_key = 'une cle(token) : grain de sel(any random string)'
+
 
 def get_db():
     if 'db' not in g:
         g.db = pymysql.connect(
             host="serveurmysql.iut-bm.univ-fcomte.fr",
-            user="ton_login",
-            password="ton_password",
-            database="BDD_ton_login",
+            user="nfaouz",               # <-- Mets ton vrai login IUT ici
+            password="secret",     # <-- Mets ton mot de passe MySQL ici
+            database="BDD_nfaouz",       # <-- Mets le nom de ta BDD ici
             charset='utf8mb4',
             cursorclass=pymysql.cursors.DictCursor
         )
     return g.db
+
 
 @app.teardown_appcontext
 def teardown_db(exception):
@@ -21,65 +28,102 @@ def teardown_db(exception):
     if db is not None:
         db.close()
 
-app = Flask(__name__)
-app.secret_key = 'une cle(token) : grain de sel(any random string)'
-app.config["TEMPLATES_AUTO_RELOAD"] = True
-
-liste_etudiants = [
-    {'id':1,'nom':'tom', 'groupe':'A1'},
-    {'id':2,'nom':'enzo', 'groupe':'A1'},
-    {'id':3,'nom':'laurence', 'groupe':'A2'},
-    {'id':4,'nom':'theo', 'groupe':'A2'},
-    {'id':5,'nom':'mehdi', 'groupe':'B1'}
-]
 
 @app.route('/')
 @app.route('/etudiant/show')
-def show_etudiants():
-    return render_template('etudiant/show_etudiant.html', etudiants=liste_etudiants )
+def show_etudiant():
+    mycursor = get_db().cursor()
+    sql = '''
+        SELECT etudiant.id_etudiant AS id,
+               etudiant.nom_etudiant AS nom,
+               etudiant.groupe_etudiant_id AS groupe_id,
+               groupe.libelle_groupe AS libelle
+        FROM etudiant
+        INNER JOIN groupe ON groupe.id_groupe = etudiant.groupe_etudiant_id
+        ORDER BY etudiant.nom_etudiant;
+    '''
+    mycursor.execute(sql)
+    etudiants = mycursor.fetchall()
+    return render_template('etudiant/show_etudiant.html', etudiants=etudiants)
 
-@app.route('/etudiant/add', methods=['GET'])
+
+@app.route('/etudiant/add')
 def add_etudiant():
-    print('''affichage du formulaire pour saisir un étudiant''')
-    return render_template('etudiant/add_etudiant.html')
+    mycursor = get_db().cursor()
+    sql = '''SELECT id_groupe AS id, libelle_groupe AS libelle FROM groupe ORDER BY libelle_groupe;'''
+    mycursor.execute(sql)
+    groupes = mycursor.fetchall()
+    return render_template('etudiant/add_etudiant.html', groupes=groupes)
 
-@app.route('/etudiant/delete')
-def delete_etudiant():
-    print('''suppression d'un étudiant''')
-    id=request.args.get('id')
-    message='paramètre dans l URL : '+id
-    print(message)
-    return redirect('/etudiant/show')
-
-@app.route('/etudiant/edit', methods=['GET'])
-def edit_etudiant():
-    print('''affichage du formulaire pour modifier un étudiant''')
-    id=request.args.get('id')
-    if id != None and id.isnumeric():
-        indice = int(id)
-        etudiant=liste_etudiants[indice-1]
-    else:
-        etudiant=[]
-    return render_template('etudiant/edit_etudiant.html', etudiant=etudiant)
 
 @app.route('/etudiant/add', methods=['POST'])
 def valid_add_etudiant():
-    print('''ajout de l'étudiant dans le tableau''')
     nom = request.form.get('nom')
-    groupe = request.form.get('groupe')
-    message = 'nom :' + nom + ' - groupe :' + groupe
-    print(message)
+    groupe_id = request.form.get('groupe_id')
+
+    mycursor = get_db().cursor()
+    sql = '''INSERT INTO etudiant(id_etudiant, nom_etudiant, groupe_etudiant_id)
+             VALUES (NULL, %s, %s);'''
+    tuple_param = (nom, groupe_id)
+    mycursor.execute(sql, tuple_param)
+    get_db().commit()
+
+    flash(f'Ajout étudiant : nom={nom}, groupe_id={groupe_id}', 'alert-success')
     return redirect('/etudiant/show')
+
+
+@app.route('/etudiant/delete')
+def delete_etudiant():
+    id_etudiant = request.args.get('id')
+
+    mycursor = get_db().cursor()
+    sql = '''DELETE FROM etudiant WHERE id_etudiant = %s;'''
+    tuple_param = (id_etudiant,)
+    mycursor.execute(sql, tuple_param)
+    get_db().commit()
+
+    flash(f'Suppression étudiant : id={id_etudiant}', 'alert-warning')
+    return redirect('/etudiant/show')
+
+
+@app.route('/etudiant/edit')
+def edit_etudiant():
+    id_etudiant = request.args.get('id')
+    mycursor = get_db().cursor()
+
+    sql = '''SELECT id_etudiant AS id, nom_etudiant AS nom, groupe_etudiant_id AS groupe_id
+             FROM etudiant
+             WHERE id_etudiant = %s;'''
+    mycursor.execute(sql, (id_etudiant,))
+    etudiant = mycursor.fetchone()
+
+    sql_groupes = '''SELECT id_groupe AS id, libelle_groupe AS libelle
+                     FROM groupe
+                     ORDER BY libelle_groupe;'''
+    mycursor.execute(sql_groupes)
+    groupes = mycursor.fetchall()
+
+    return render_template('etudiant/edit_etudiant.html', etudiant=etudiant, groupes=groupes)
+
 
 @app.route('/etudiant/edit', methods=['POST'])
 def valid_edit_etudiant():
-    print('''modification de l'étudiant dans le tableau''')
-    id = request.form.get('id')
+    id_etudiant = request.form.get('id')
     nom = request.form.get('nom')
-    groupe = request.form.get('groupe')
-    message = 'nom :' + nom + ' - groupe :' + groupe + ' pour l etudiant d identifiant :' + id
-    print(message)
+    groupe_id = request.form.get('groupe_id')
+
+    mycursor = get_db().cursor()
+    sql = '''UPDATE etudiant
+             SET nom_etudiant = %s,
+                 groupe_etudiant_id = %s
+             WHERE id_etudiant = %s;'''
+    tuple_param = (nom, groupe_id, id_etudiant)
+    mycursor.execute(sql, tuple_param)
+    get_db().commit()
+
+    flash(f'Modification étudiant : id={id_etudiant}, nom={nom}, groupe_id={groupe_id}', 'alert-success')
     return redirect('/etudiant/show')
 
+
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True)
