@@ -1,0 +1,42 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<h2>Liste des Pneus de Vélo</h2>
+    <a href="/pneu-velo/add" class="btn btn-success btn-sm">Ajouter</a>
+
+<table class="table table-striped table-bordered mt-3">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nom</th>
+            <th>Type ID</th>
+            <th>Fabricant</th>
+            <th>Modèle</th>
+            <th>Prix</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for p in pneus %}
+        <tr>
+            <td>{{ p.id }}</td>
+            <td>{{ p.nomPneu }}</td>
+            <td class="text-danger font-weight-bold">{{ p.typePneu_id }}</td>
+            <td>{{ p.fabricant }}</td>
+            <td>{{ p.modelePneu }}</td>
+            <td>{{ p.prixPneu }} €</td>
+            <td>
+
+                <a href="/pneu-velo/edit?id={{ p['id'] }}" class="btn btn-warning btn-sm">Modifier</a>
+                <a href="/pneu-velo/delete?id={{ p['id'] }}" class="btn btn-danger btn-sm">Supprimer</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+
+
+
+
+

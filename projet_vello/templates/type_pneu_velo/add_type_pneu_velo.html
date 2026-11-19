@@ -1,0 +1,15 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<div class="mx-3">
+    <h2>Ajouter un type de pneu</h2>
+    <form action="/type-pneu-velo/add" method="post">
+        <div class="mb-3">
+            <label for="libelleType" class="form-label">Libellé du Type (Requis)</label>
+            <input type="text" class="form-control" id="libelleType" name="libelleType" required>
+        </div>
+        <button type="submit" class="btn btn-success">Valider l'ajout</button>
+        <a href="/type-pneu-velo/show" class="btn btn-secondary">Annuler</a>
+    </form>
+</div>
+{% endblock %}

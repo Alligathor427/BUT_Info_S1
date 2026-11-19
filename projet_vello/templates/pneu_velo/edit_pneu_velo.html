@@ -1,0 +1,73 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<div class="mx-3">
+    <h2>Modifier un pneu de vélo</h2>
+    {% for p in pneus %}
+        {% if p.id == id|int %}
+        <form action="/pneu-velo/edit" method="post">
+            <input type="hidden" name="id" value="{{ p.id }}">
+
+            <div class="mb-3">
+                <label for="nomPneu" class="form-label">Nom du pneu (Requis)</label>
+                <input type="text" class="form-control" id="nomPneu" name="nomPneu" value="{{ p.nomPneu }}" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="typePneu_id" class="form-label">Type de pneu (Requis)</label>
+                <select class="form-select bg-warning" id="typePneu_id" name="typePneu_id" required>
+                    {% for t in types %}
+                        <option value="{{ t.id }}" {% if t.id == p.typePneu_id %}selected{% endif %}>{{ t.libelleType }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="fabricant" class="form-label">Fabricant</label>
+                <input type="text" class="form-control" id="fabricant" name="fabricant" value="{{ p.fabricant }}">
+            </div>
+
+            <div class="mb-3">
+                <label for="modelePneu" class="form-label">Modèle</label>
+                <input type="text" class="form-control" id="modelePneu" name="modelePneu" value="{{ p.modelePneu }}">
+            </div>
+
+            <div class="mb-3">
+                <label for="largeurPneu" class="form-label">Largeur</label>
+                <input type="number" step="0.1" class="form-control" id="largeurPneu" name="largeurPneu" value="{{ p.largeurPneu }}">
+            </div>
+
+            <div class="mb-3">
+                <label for="diametreJante" class="form-label">Diamètre jante</label>
+                <input type="number" class="form-control" id="diametreJante" name="diametreJante" value="{{ p.diametreJante }}">
+            </div>
+
+            <div class="mb-3">
+                <label for="dimension" class="form-label">Dimension</label>
+                <input type="text" class="form-control" id="dimension" name="dimension" value="{{ p.dimension }}">
+            </div>
+
+            <div class="mb-3">
+                <label for="dateCreation" class="form-label">Date de création</label>
+                <input type="date" class="form-control" id="dateCreation" name="dateCreation" value="{{ p.dateCreation }}">
+            </div>
+
+            <div class="mb-3">
+                <label for="prixPneu" class="form-label">Prix (€)</label>
+                <input type="number" step="0.01" class="form-control" id="prixPneu" name="prixPneu" value="{{ p.prixPneu }}">
+            </div>
+
+            <div class="mb-3">
+                <label for="image" class="form-label">Nom du fichier image</label>
+                <input type="text" class="form-control" id="image" name="image" value="{{ p.image }}">
+            </div>
+
+            <button type="submit" class="btn btn-warning">Valider les modifications</button>
+            <a href="/pneu-velo/show" class="btn btn-secondary">Annuler</a>
+        </form>
+        {% endif %}
+    {% endfor %}
+</div>
+{% endblock %}
+
+
