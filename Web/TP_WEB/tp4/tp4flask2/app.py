@@ -1,6 +1,5 @@
 #! /usr/bin/python
 # -*- coding:utf-8 -*-
-
 from flask import Flask, request, render_template, redirect, flash, session, g
 import pymysql.cursors
 
@@ -13,9 +12,9 @@ def get_db():
     if 'db' not in g:
         g.db = pymysql.connect(
             host="serveurmysql.iut-bm.univ-fcomte.fr",
-            user="nfaouz",               # <-- Mets ton vrai login IUT ici
-            password="secret",     # <-- Mets ton mot de passe MySQL ici
-            database="BDD_nfaouz",       # <-- Mets le nom de ta BDD ici
+            user="nfaouz",
+            password="secret",  # <-- Mets ton mot de passe MySQL ici
+            database="BDD_nfaouz",
             charset='utf8mb4',
             cursorclass=pymysql.cursors.DictCursor
         )
@@ -50,7 +49,9 @@ def show_etudiant():
 @app.route('/etudiant/add')
 def add_etudiant():
     mycursor = get_db().cursor()
-    sql = '''SELECT id_groupe AS id, libelle_groupe AS libelle FROM groupe ORDER BY libelle_groupe;'''
+    sql = '''SELECT id_groupe AS id, libelle_groupe AS libelle
+             FROM groupe
+             ORDER BY libelle_groupe;'''
     mycursor.execute(sql)
     groupes = mycursor.fetchall()
     return render_template('etudiant/add_etudiant.html', groupes=groupes)

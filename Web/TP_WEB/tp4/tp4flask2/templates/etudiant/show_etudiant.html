@@ -1,36 +1,52 @@
 <!doctype html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Document</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
+    <title>Afficher les étudiants</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.css') }}">
 </head>
 <body>
-<h1>listes des étudiants</h1>
+<div class="container mt-3">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for categorie, message in messages %}
+                <div class="alert {{ categorie }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
 
-<a href="/etudiant/add" class="btn btn-success"  >ajouter un étudiant  </a>
+    <h2>Liste des étudiants</h2>
+    <a href="/etudiant/add" class="btn btn-primary mb-3">Ajouter un étudiant</a>
 
-{% if etudiants | length >= 1 %}
-    <table class="table">
-        <thead class="thead-dark">
-        <tr>
-            <th>id</th><th>nom</th><th>groupe</th>
-        </tr>
-        </thead>
-        {% for etudiant in etudiants %}
-            <tr>
-                <td>{{ etudiant.id }}</td><td>{{ etudiant.nom }}</td><td>{{ etudiant.groupe }}</td>
-                <td>
-                    <a href="/etudiant/edit?id={{ etudiant.id }}"   class="btn btn-success">editer</a>&nbsp;
-                    <a href="/etudiant/delete?id={{ etudiant.id }}"   class="btn btn-danger">supprimer</a>
-                </td>
-            </tr>
-        {% endfor %}
-    </table>
-{% else %}
-    <h2> la liste des étudiants est vide</h2>
-{% endif %}
+    {% if etudiants | length >= 1 %}
+        <table class="table table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Nom</th>
+                    <th>Groupe</th>
+                    <th>Opérations</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for e in etudiants %}
+                <tr>
+                    <td>{{ e['id'] }}</td>
+                    <td>{{ e['nom'] }}</td>
+                    <td><strong>{{ e['libelle'] }}</strong></td>
+                    <td>
+                        <a href="/etudiant/edit?id={{ e['id'] }}" class="btn btn-warning btn-sm">Modifier</a>
+                        &nbsp;
+                        <a href="/etudiant/delete?id={{ e['id'] }}" class="btn btn-danger btn-sm">Supprimer</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="alert alert-info">La liste des étudiants est vide.</div>
+    {% endif %}
+</div>
 </body>
 </html>

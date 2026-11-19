@@ -1,20 +1,29 @@
-{% extends 'layout.html' %}
-
-{% block body %}
-<div class="mx-3">
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Modifier un étudiant</title>
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.css">
+</head>
+<body>
+<div class="container mt-3">
     <h2>Modifier un étudiant</h2>
-    
-    <!-- Plus besoin de {% for %} ni de {% if %} ! -->
+
+    {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+
     <form action="/etudiant/edit" method="post">
         <input type="hidden" name="id" value="{{ etudiant['id'] }}">
 
         <div class="mb-3">
-            <label for="nom" class="form-label">Nom de l'étudiant</label>
+            <label for="nom" class="form-label">Nom de l'étudiant (Requis)</label>
             <input type="text" class="form-control" id="nom" name="nom" value="{{ etudiant['nom'] }}" required>
         </div>
 
         <div class="mb-3">
-            <label for="groupe_id" class="form-label">Groupe</label>
+            <label for="groupe_id" class="form-label">Groupe (Requis)</label>
             <select class="form-select bg-warning" id="groupe_id" name="groupe_id" required>
                 {% for g in groupes %}
                     <option value="{{ g['id'] }}" {% if g['id'] == etudiant['groupe_id'] %}selected{% endif %}>
@@ -28,4 +37,5 @@
         <a href="/etudiant/show" class="btn btn-secondary">Annuler</a>
     </form>
 </div>
-{% endblock %}
+</body>
+</html>
