@@ -13,7 +13,7 @@ def get_db():
         g.db = pymysql.connect(
             host="serveurmysql.iut-bm.univ-fcomte.fr",
             user="nfaouz",
-            password="secret",  # <-- Mets ton mot de passe MySQL ici
+            password="secret",
             database="BDD_nfaouz",
             charset='utf8mb4',
             cursorclass=pymysql.cursors.DictCursor

@@ -24,6 +24,7 @@ def div(a, b):
 print ( div (59,7),
 div (-59,7),
 div(59,-7),
+div(56,7),
 div(-59,-7))
 
 def quotient(a, b):

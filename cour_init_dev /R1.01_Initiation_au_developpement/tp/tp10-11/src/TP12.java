@@ -17,9 +17,8 @@ public class TP12 {
 
         int[][] liste_cases = new int[35][2];
         int index = 0;
-
-        for (int i = 5; i <= 65; i += 10) {
-            for (int y = 5; y <= 45; y += 10) {
+        for (int y = 45; y >= 5; y -= 10) {
+            for (int i = 5; i <= 65; i += 10) {
                 liste_cases[index][0] = i;
                 liste_cases[index][1] = y;
 
